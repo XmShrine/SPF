@@ -50,6 +50,27 @@ class Monomial:
     def copy(self):
         self.update()
         return Monomial(self.coeff.copy(), self.variables.copy())
+    def to_Monomial(string):
+        par_posi = [] # 用于记录括号位置
+        com_posi = [] # 用于记录逗号位置
+        for i in range(len(string)):
+            if string[i] == '[':
+                par_posi.append(i)
+            if string[i] == ']':
+                par_posi.append(i)
+            elif string[i] == ',':
+                com_posi.append(i)
+        coeff = int(string[par_posi[0]+1:par_posi[1]])
+        variables = []
+        if len(com_posi) == 0:
+            if par_posi[3] - par_posi[2] > 1:
+                variables = [int(string[par_posi[2]+1:par_posi[3]])]
+        else:
+            com_posi.append(par_posi[3])
+            com_posi.insert(0, par_posi[2])
+            for i in range(len(com_posi)-1):
+                variables.append(int(string[com_posi[i]+1:com_posi[i+1]]))
+        return Monomial(coeff, variables)
     def __init__(self, coeff, variables):
         self.coeff = coeff
         self.variables = variables
@@ -156,6 +177,17 @@ class Polynomial:
             if self.vars[i].full_equal(pol.vars[i]) == False:
                 return False
         return True
+    def to_Polynomial(string):
+        par_posi = [] # 用于记录括号位置
+        result = Polynomial([])
+        for i in range(len(string)):
+            if string[i] == '[':
+                par_posi.append(i)
+            if string[i] == ']':
+                par_posi.append(i)
+        for i in range(int(len(par_posi)/4)):
+            result = result + Polynomial([Monomial.to_Monomial(string[par_posi[i*4]:par_posi[i*4+3]+1])])
+        return result.update()
     def __init__(self, mon_arr):
         self.vars = mon_arr
         pass
