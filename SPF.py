@@ -1,6 +1,16 @@
 class MonomialNotEqualError(Exception):
     pass
 class SymmetricPolynomialError(Exception):
+    def __str__(self):
+        return "The polynomial is not symmetric."
+    pass
+class MonomialFormatError(Exception):
+    def __str__(self):
+        return "The monomial format is incorrect. Please use the format: [coeff][var1,var2,...]"
+    pass
+class PolynomialFormatError(Exception):
+    def __str__(self):
+        return "The polynomial format is incorrect. Please use the format: [coeff][var1,var2,...]+[coeff][var1,var2,...]+..."
     pass
 class Monomial:
     def update(self):
@@ -60,7 +70,10 @@ class Monomial:
                 par_posi.append(i)
             elif string[i] == ',':
                 com_posi.append(i)
-        coeff = int(string[par_posi[0]+1:par_posi[1]])
+        try:
+            coeff = int(string[par_posi[0]+1:par_posi[1]])
+        except:
+            raise MonomialFormatError()
         variables = []
         if len(com_posi) == 0:
             if par_posi[3] - par_posi[2] > 1:
@@ -185,6 +198,8 @@ class Polynomial:
                 par_posi.append(i)
             if string[i] == ']':
                 par_posi.append(i)
+        if len(par_posi) % 4 != 0:
+            raise PolynomialFormatError()
         for i in range(int(len(par_posi)/4)):
             result = result + Polynomial([Monomial.to_Monomial(string[par_posi[i*4]:par_posi[i*4+3]+1])])
         return result.update()
