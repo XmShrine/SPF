@@ -71,7 +71,7 @@ class Monomial:
             elif string[i] == ',':
                 com_posi.append(i)
         try:
-            coeff = int(string[par_posi[0]+1:par_posi[1]])
+            coeff = float(string[par_posi[0]+1:par_posi[1]])
         except:
             raise MonomialFormatError()
         variables = []
