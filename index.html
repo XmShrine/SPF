@@ -25,6 +25,7 @@
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/JavaScript" src="SPF.js"></script>
 
     <style>
         /* ----------------------------------- */
@@ -375,7 +376,7 @@
                 <textarea id="polyInput" placeholder="在此输入对称多项式..." rows="5"></textarea>
                 <button id="submitBtn" class="action-button">
                     <span class="icon">⏎</span>
-                    <span class="text">回车</span>
+                    <span class="text">开始分解</span>
                 </button>
             </div>
             
@@ -397,7 +398,8 @@
             <div class="modal-body">
                 <h2>📘 帮助与提示</h2>
                 <hr>
-                <p><strong>输入格式说明：</strong></p>
+                <p>目前缺省，后续加入</p>
+                <!-- <p><strong>输入格式说明：</strong></p>
                 <p>请确保您的多项式输入符合程序要求。例如，一个简单多项式可能是：</p>
                 <pre>a^2 + b^2 + c^2</pre>
                 <p>程序将尝试将其分解为初等对称多项式 $\sigma_1, \sigma_2, \dots$ 的组合。</p>
@@ -408,7 +410,7 @@
                     <li>**加和模式 (3):** 结果倾向于用求和形式表示。</li>
                 </ul>
                 <p><strong>$\LaTeX$ 支持：</strong></p>
-                <p>输出区域支持 $\LaTeX$ 语法。您可以使用 `$` 或 `$$` 符号来包含数学公式，例如：$\sigma_1 = \sum_{i} x_i$。</p>
+                <p>输出区域支持 $\LaTeX$ 语法。您可以使用 `$` 或 `$$` 符号来包含数学公式，例如：$\sigma_1 = \sum_{i} x_i$。</p> -->
             </div>
         </div>
     </div>
@@ -433,7 +435,7 @@
             // 示例输出，包含 LaTeX 公式
             // MathJax 默认支持 $...$ 和 $$...$$
             const sampleOutput = {
-                1: `根据经典模式，多项式 $${input.replace(/\s/g, "")}$$ 的初等分解结果为：$$a^2 + b^2 + c^2 = \\sigma_1^2 - 2\\sigma_2$$其中 $\\sigma_1 = a+b+c$。`,
+                1: SPFApply(input),
                 2: `乘积模式结果：$$\\frac{1}{2}\\sigma_1 (\\sigma_1^2 - 3\\sigma_2) + \\sigma_3$$`,
                 3: `加和模式结果：$$(\\sigma_1 - a)(\\sigma_1 - b)(\\sigma_1 - c)$$`
             };
