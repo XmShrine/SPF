@@ -319,7 +319,7 @@ function SPFHelper(pol, helper) {
     }
     for (var i=0; i<len; i++) {
         res[i] = (i!=len-1)?mon[i]-mon[i+1]:mon[i];
-        tmp = Polynomial.power(helper.get(i), res[i]);
+        var tmp = Polynomial.power(helper.get(i), res[i]);
         temp = Polynomial.mult(temp, tmp);
     }
     temp = Polynomial.mult(Polynomial.number(-pol.arr[0].coeff), temp);
@@ -333,16 +333,11 @@ function SPF(pol) {
     pol.update();
     var helper = new BaSym(pol.maxVar());
     var res = new Polynomial();
-    var nsnss = 0;
     while (Polynomial.compare(pol, Polynomial.number(0)) == false) {
         var tmp = SPFHelper(pol, helper);
         pol = null;
         pol = tmp[0];
         res = Polynomial.add(res, tmp[1]);
-        nsnss += 1;
-        if (nsnss >20) {
-            break;
-        }
     }
     return res;
 }
