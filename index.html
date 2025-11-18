@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>对称多项式初等分解 - 暗黑模式</title>
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-Gvr4j2wz/7e0oKjD+xT5s5z9f+S+9yA9l1w2t0QWp4P9p3q7PzX2a8D/O5z5A9Z4w" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-U/pT2C8/W+Y/Bw0n0f6l9z2G+I/T2v2xT5s+t+9z4A4A7d3x+W1W+Q1W+X2+Y+Y" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-J8t+fWwS/kSj/xX/Y+pT5o+qB1b2zFf/P8W5wWlA3G4w+5z7B8/9Q2O/z5W+C6D/Q1F9E3P9D/A4A7g/g" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha384-fhYLJZkbU8EZ0R6AxN8I6YTILgGrhYZVXZ2j24MVKSTOvqtCPcd6yAevPl+4TuRW" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha384-XI4F3vouKmuyjRcSjWc2mNMaUZFby1FYX0GHoDcgD4TL8O6cWsDHdNp3Zu9SS3hR" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./katex/katex.min.css">
+    <script defer src="./katex/katex.min.js"></script>
+    <script defer src="./katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
 
     <style>
         /* ----------------------------------- */
@@ -371,7 +374,7 @@
         </div>
 
         <div class="output-area card">
-            <h2>分解结果 (支持 $\LaTeX$ 渲染)</h2>
+            <h2>分解结果 (支持 \( \LaTeX \) 渲染)</h2>
             <div id="polyOutput" class="output-box" data-katex>
                 等待输入...
             </div>
@@ -388,7 +391,7 @@
                 <hr>
                 <p><strong>输入格式说明：</strong></p>
                 <p>请确保您的多项式输入符合程序要求。例如，一个简单多项式可能是：</p>
-                <pre>a^2 + b^2 + c^2</pre>
+                <pre>\(a^2 + b^2 + c^2\)</pre>
                 <p>程序将尝试将其分解为初等对称多项式 $\sigma_1, \sigma_2, \dots$ 的组合。</p>
                 <p><strong>分解模式解释：</strong></p>
                 <ul>
@@ -403,7 +406,7 @@
     </div>
 
     <script>
-        // *** JavaScript 逻辑部分 (保持不变) ***
+        // *** JavaScript 逻辑部分 ***
 
         /**
          * TODO: 请在此处实现您的 DealPoly 函数
@@ -462,7 +465,7 @@
                     throwOnError : false
                 });
             } else {
-                console.error("KaTeX auto-render function is not available.");
+                console.error("KaTeX auto-render function is not available. Please check the local KaTeX files.");
             }
         }
 
