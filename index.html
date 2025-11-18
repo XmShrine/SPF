@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对称多项式初等分解 - 暗黑模式</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-Gvr4j2wz/7e0oKjD+xT5s5z9f+S+9yA9l1w2t0QWp4P9p3q7PzX2a8D/O5z5A9Z4w" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-U/pT2C8/W+Y/Bw0n0f6l9z2G+I/T2v2xT5s+t+9z4A4A7d3x+W1W+Q1W+X2+Y+Y" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-J8t+fWwS/kSj/xX/Y+pT5o+qB1b2zFf/P8W5wWlA3G4w+5z7B8/9Q2O/z5W+C6D/Q1F9E3P9D/A4A7g/g" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+    <style>
+        /* ----------------------------------- */
+        /* 基础与排版 - 苹果暗黑设计语言 */
+        /* ----------------------------------- */
+        :root {
+            --apple-bg: #1e1e1e; /* 深邃的暗灰色背景 */
+            --apple-card-bg: #2c2c2e; /* 卡片背景，略浅于主背景 */
+            --apple-border: #444444; /* 深色背景下的柔和边框 */
+            --apple-shadow: rgba(0, 0, 0, 0.4); /* 暗黑模式下的阴影 */
+            --apple-primary: #0a84ff; /* 蓝色主色调 (更亮的 Apple Blue 适应暗色) */
+            --apple-text-color: #f0f0f0; /* 亮白色主文字 */
+            --apple-secondary-text: #aeaeb3; /* 柔和的浅灰色辅助文字 */
+            --apple-radius: 12px;
+            --apple-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --input-box-bg: #3c3c3e; /* 输入框的更深背景 */
+        }
+
+        body {
+            font-family: var(--apple-font);
+            background-color: var(--apple-bg);
+            color: var(--apple-text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            /* 确保 KaTeX 在暗黑模式下的颜色适配 */
+            --katex-color: var(--apple-text-color);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 卡片风格 */
+        .card {
+            background-color: var(--apple-card-bg);
+            border-radius: var(--apple-radius);
+            padding: 25px;
+            /* 模拟 macOS 窗口的深度感 */
+            box-shadow: 0 8px 30px var(--apple-shadow); 
+            border: 1px solid var(--apple-border);
+            transition: box-shadow 0.3s ease, border-color 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            border-color: #555555;
+        }
+        
+        /* 强制 KaTeX 公式颜色为白色 (因为它可能默认是黑色) */
+        .katex, .katex-display {
+            color: var(--apple-text-color) !important;
+        }
+
+        /* ----------------------------------- */
+        /* 头部与标题 */
+        /* ----------------------------------- */
+        .header-card {
+            text-align: center;
+        }
+
+        .header-card h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+        }
+
+        .header-card p {
+            color: var(--apple-secondary-text);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* ----------------------------------- */
+        /* 输入与按钮 */
+        /* ----------------------------------- */
+        .input-area {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        #polyInput {
+            flex-grow: 1;
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            padding: 15px;
+            background-color: var(--input-box-bg); /* 更深的输入框背景 */
+            border: 1px solid var(--apple-border);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: monospace;
+            color: var(--apple-text-color);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        #polyInput:focus {
+            border-color: var(--apple-primary);
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3); /* 聚焦光晕效果 */
+        }
+
+        .action-button {
+            background-color: var(--apple-primary);
+            color: black; /* 确保文字在亮蓝背景上清晰 */
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600; /* 加粗 */
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
+            height: 120px;
+            min-width: 80px;
+        }
+        /* 模拟苹果 SF Symbols 风格的亮色按钮文本 */
+        .action-button .icon, .action-button .text {
+            color: white; 
+        }
+
+        .action-button:hover {
+            background-color: #2b9aff; /* 略亮 */
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+
+        .action-button .icon {
+            font-size: 20px;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .action-button .text {
+            font-size: 14px;
+        }
+
+        /* ----------------------------------- */
+        /* 模式选择 (Segmented Control 风格) */
+        /* ----------------------------------- */
+        .mode-selector {
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--apple-border);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .mode-selector label:first-child {
+            font-weight: 600;
+            margin-right: 20px;
+            color: var(--apple-text-color);
+            white-space: nowrap;
+        }
+
+        .mode-buttons {
+            display: inline-flex;
+            /* 模仿 Segmented Control 的背景 */
+            background-color: var(--input-box-bg); 
+            border: 1px solid var(--apple-border);
+            border-radius: 9px; /* 更圆润 */
+            overflow: hidden;
+            flex-shrink: 1;
+        }
+
+        .mode-buttons input[type="radio"] {
+            display: none;
+        }
+
+        .mode-buttons label {
+            padding: 8px 15px;
+            font-size: 14px; /* 字体略小 */
+            cursor: pointer;
+            background-color: transparent; /* 默认透明 */
+            color: var(--apple-secondary-text);
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+            /* 在暗黑模式下移除边框，依赖背景颜色和高亮 */
+            border-right: none; 
+            font-weight: 500;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        /* 选中状态：模拟Segmented Control的蓝色背景和白字 */
+        .mode-buttons input[type="radio"]:checked + label {
+            background-color: var(--apple-primary);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* 增加深度感 */
+        }
+
+        /* ----------------------------------- */
+        /* 输出区域 */
+        /* ----------------------------------- */
+        .output-area h2 {
+            font-size: 20px;
+            font-weight: 500;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--apple-border);
+            padding-bottom: 8px;
+        }
+
+        .output-box {
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: var(--input-box-bg); /* 和输入框使用同级背景 */
+            border: 1px solid var(--apple-border);
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--apple-text-color);
+        }
+
+        /* ----------------------------------- */
+        /* 右下角提示按钮与模态框 */
+        /* ----------------------------------- */
+        .info-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--apple-primary);
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.2s, transform 0.2s;
+            z-index: 100;
+        }
+
+        .info-button:hover {
+            background-color: #2b9aff;
+            transform: translateY(-2px);
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 200;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6); /* 更深的半透明背景 */
+            backdrop-filter: blur(8px); /* 更强的磨砂玻璃效果 */
+        }
+
+        .modal-content {
+            margin: 10% auto;
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+            background-color: var(--apple-card-bg); /* 使用卡片背景色 */
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+        }
+
+        /* 动画效果 */
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+
+        .close-button {
+            color: var(--apple-secondary-text);
+            float: right;
+            font-size: 36px;
+            font-weight: bold;
+            transition: color 0.2s;
+            line-height: 1;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--apple-text-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-body h2 {
+            color: var(--apple-primary);
+        }
+
+        .modal-body hr {
+            border: none;
+            border-top: 1px solid var(--apple-border);
+            margin: 10px 0 20px 0;
+        }
+
+        .modal-body pre {
+            background-color: var(--input-box-bg); /* 使用深色背景 */
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 14px;
+            margin: 10px 0;
+            color: white; /* 代码文本使用纯白 */
+            border: 1px solid var(--apple-border);
+        }
+
+        .modal-body ul {
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="card header-card">
+            <h1>对称多项式初等分解</h1>
+            <p>Symmetric Polynomial Elementary Decomposition</p>
+        </header>
+
+        <div class="main-content card">
+            
+            <div class="mode-selector">
+                <label>选择分解模式:</label>
+                <div class="mode-buttons">
+                    <input type="radio" id="mode1" name="polyMode" value="1" checked>
+                    <label for="mode1">经典模式 (1)</label>
+                    
+                    <input type="radio" id="mode2" name="polyMode" value="2">
+                    <label for="mode2">乘积模式 (2)</label>
+                    
+                    <input type="radio" id="mode3" name="polyMode" value="3">
+                    <label for="mode3">加和模式 (3)</label>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <textarea id="polyInput" placeholder="在此输入对称多项式..." rows="5"></textarea>
+                <button id="submitBtn" class="action-button">
+                    <span class="icon">⏎</span>
+                    <span class="text">回车</span>
+                </button>
+            </div>
+            
+        </div>
+
+        <div class="output-area card">
+            <h2>分解结果 (支持 $\LaTeX$ 渲染)</h2>
+            <div id="polyOutput" class="output-box" data-katex>
+                等待输入...
+            </div>
+        </div>
+    </div>
+
+    <button id="infoBtn" class="info-button">?</button>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content card">
+            <span class="close-button">&times;</span>
+            <div class="modal-body">
+                <h2>📘 帮助与提示</h2>
+                <hr>
+                <p><strong>输入格式说明：</strong></p>
+                <p>请确保您的多项式输入符合程序要求。例如，一个简单多项式可能是：</p>
+                <pre>a^2 + b^2 + c^2</pre>
+                <p>程序将尝试将其分解为初等对称多项式 $\sigma_1, \sigma_2, \dots$ 的组合。</p>
+                <p><strong>分解模式解释：</strong></p>
+                <ul>
+                    <li>**经典模式 (1):** 结果将使用标准的初等对称多项式表达。</li>
+                    <li>**乘积模式 (2):** 结果倾向于用乘积形式表示。</li>
+                    <li>**加和模式 (3):** 结果倾向于用求和形式表示。</li>
+                </ul>
+                <p><strong>$\LaTeX$ 支持：</strong></p>
+                <p>输出区域支持 $\LaTeX$ 语法。您可以使用 `$` 或 `$$` 符号来包含数学公式，例如：$\sigma_1 = \sum_{i} x_i$。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // *** JavaScript 逻辑部分 (保持不变) ***
+
+        /**
+         * TODO: 请在此处实现您的 DealPoly 函数
+         * @param {string} input - 输入框的文本内容
+         * @param {number} mode - 选择的模式 (1, 2, 或 3)
+         * @returns {string} - 处理后的结果文本 (应包含 LaTeX 字符串)
+         */
+        function DealPoly(input, mode) {
+            // 这是一个示例实现，您需要替换为您的实际逻辑
+            console.log(`处理输入: "${input}", 模式: ${mode}`);
+            
+            if (!input.trim()) {
+                return "请输入一个多项式。";
+            }
+            
+            // 示例输出，包含 LaTeX 公式
+            const sampleOutput = {
+                1: `根据经典模式，多项式 $${input.replace(/\s/g, "")}$$ 的初等分解结果为：$$a^2 + b^2 + c^2 = \\sigma_1^2 - 2\\sigma_2$$其中 $\\sigma_1 = a+b+c$。`,
+                2: `乘积模式结果：$$\\frac{1}{2}\\sigma_1 (\\sigma_1^2 - 3\\sigma_2) + \\sigma_3$$`,
+                3: `加和模式结果：$$(\\sigma_1 - a)(\\sigma_1 - b)(\\sigma_1 - c)$$`
+            };
+            
+            return sampleOutput[mode] || "模式错误或处理失败。";
+        }
+
+        const polyInput = document.getElementById('polyInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const polyOutput = document.getElementById('polyOutput');
+        const modeRadios = document.querySelectorAll('input[name="polyMode"]');
+        const infoBtn = document.getElementById('infoBtn');
+        const infoModal = document.getElementById('infoModal');
+        const closeButton = document.querySelector('.close-button');
+
+        function processInput() {
+            const input = polyInput.value;
+            let mode = 1; // 默认经典模式
+            modeRadios.forEach(radio => {
+                if (radio.checked) {
+                    mode = parseInt(radio.value);
+                }
+            });
+            
+            // 调用 DealPoly 函数
+            const result = DealPoly(input, mode);
+            
+            // 更新输出框内容
+            polyOutput.innerHTML = result;
+            
+            // 重新渲染 LaTeX
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(polyOutput, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false}
+                    ],
+                    throwOnError : false
+                });
+            } else {
+                console.error("KaTeX auto-render function is not available.");
+            }
+        }
+
+        // 按钮点击事件
+        submitBtn.addEventListener('click', processInput);
+        
+        // 模态框逻辑
+        infoBtn.addEventListener('click', () => {
+            infoModal.style.display = 'block';
+        });
+
+        closeButton.addEventListener('click', () => {
+            infoModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == infoModal) {
+                infoModal.style.display = 'none';
+            }
+        });
+        
+        // 初始渲染一次
+        if (typeof renderMathInElement === 'function') {
+            renderMathInElement(polyOutput, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError : false
+            });
+        }
+        
+    </script>
+</body>
+</html>
