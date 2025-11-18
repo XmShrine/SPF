@@ -167,32 +167,29 @@
             align-items: flex-start;
         }
         
-        /* N值输入框的容器 (新样式) */
+        /* N值输入框的容器 */
         #n-input-container {
             display: flex;
             align-items: center;
-            /* 模仿 iOS Setting 的左右间距和垂直居中 */
             gap: 15px; 
-            padding: 15px 0; 
-            margin-bottom: 20px; /* 与多项式输入框保持间距 */
+            padding: 12px 0; 
+            margin-bottom: 20px; 
             border-bottom: 1px solid var(--apple-border);
         }
 
         #n-input-container label {
-            /* 确保标签颜色正确，且占据左侧空间 */
             color: var(--apple-text-color);
             font-weight: 500;
         }
 
         #polyTotalNum {
-            /* 模仿 iOS 的小输入框样式 */
-            width: 70px; /* 稍微窄一些 */
+            width: 70px; 
             padding: 8px 12px;
             background-color: var(--input-box-bg);
             border: 1px solid var(--apple-border);
             border-radius: 8px;
             font-size: 16px;
-            color: var(--apple-primary); /* 将 N 值颜色设置为强调色 */
+            color: var(--apple-primary); 
             text-align: right;
             transition: border-color 0.2s, box-shadow 0.2s;
             margin-left: auto; /* 推到最右边 */
@@ -221,12 +218,112 @@
         .action-button:active {transform: scale(0.98);}
         .action-button .icon {font-size: 20px;line-height: 1;margin-bottom: 5px;}
         .action-button .text {font-size: 14px;}
-        .mode-selector {padding-bottom: 15px;border-bottom: 1px solid var(--apple-border);margin-bottom: 15px;display: flex;align-items: center;}
-        .mode-selector label:first-child {font-weight: 600;margin-right: 20px;color: var(--apple-text-color);white-space: nowrap;}
-        .mode-buttons {display: inline-flex;background-color: var(--input-box-bg);border: 1px solid var(--apple-border);border-radius: 9px;overflow: hidden;flex-shrink: 1;}
+        
+        /* 模式选择器 (Desktop/Large Screen) */
+        .mode-selector {
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--apple-border);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .mode-selector label:first-child {
+            font-weight: 600;
+            margin-right: 20px;
+            color: var(--apple-text-color);
+            white-space: nowrap;
+        }
+        .mode-buttons {
+            display: flex; /* 优化为 flex */
+            background-color: var(--input-box-bg);
+            border: 1px solid var(--apple-border);
+            border-radius: 9px;
+            overflow: hidden;
+            flex-shrink: 1;
+        }
         .mode-buttons input[type="radio"] {display: none;}
-        .mode-buttons label {padding: 8px 15px;font-size: 14px;cursor: pointer;background-color: transparent;color: var(--apple-secondary-text);transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;border-right: none;font-weight: 500;text-align: center;min-width: 80px;}
-        .mode-buttons input[type="radio"]:checked + label {background-color: var(--apple-primary);color: white;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);}
+        .mode-buttons label {
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: transparent;
+            color: var(--apple-secondary-text);
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+            border-right: none;
+            font-weight: 500;
+            text-align: center;
+            flex: 1; /* 平均分配宽度 */
+            min-width: 80px; /* 保证桌面端可读性 */
+        }
+        .mode-buttons input[type="radio"]:checked + label {
+            background-color: var(--apple-primary);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+
+        /* ----------------------------------- */
+        /* 移动端适配 (小于等于 600px) */
+        /* ----------------------------------- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .card {
+                padding: 15px; /* 减小卡片内边距 */
+            }
+            
+            /* 模式选择器：垂直堆叠 */
+            .mode-selector {
+                flex-direction: column; 
+                align-items: stretch; /* 占满横向空间 */
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+            }
+            
+            .mode-selector label:first-child {
+                margin-bottom: 8px; /* 标签和按钮组之间增加距离 */
+                margin-right: 0;
+            }
+
+            /* 按钮组：占据整行宽度 */
+            .mode-buttons {
+                width: 100%;
+            }
+            
+            /* 按钮标签：平均分配宽度，允许缩小 */
+            .mode-buttons label {
+                padding: 8px 5px; /* 减小横向内边距 */
+                font-size: 13px; /* 略微缩小字体 */
+                min-width: 0; /* 允许按钮宽度自由变化 */
+            }
+            
+            /* 输入区域：分解按钮和多项式输入框垂直堆叠 */
+            .input-area {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            /* 分解按钮全宽显示 */
+            .action-button {
+                height: auto;
+                min-width: 100%;
+                padding: 10px 20px;
+                flex-direction: row;
+                justify-content: center;
+            }
+            .action-button .icon {
+                margin-bottom: 0;
+                margin-right: 5px;
+            }
+            
+            /* N值输入框也需要适配 */
+            #n-input-container {
+                padding: 8px 0; /* 再次压缩 N 输入区域的垂直空间 */
+            }
+        }
+
+
         .info-button {position: fixed;bottom: 30px;right: 30px;width: 48px;height: 48px;border-radius: 50%;background-color: var(--apple-primary);color: white;font-size: 24px;font-weight: 600;border: none;cursor: pointer;box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);transition: background-color 0.2s, transform 0.2s;z-index: 100;}
         .info-button:hover {background-color: #2b9aff;transform: translateY(-2px);}
         .modal {display: none;position: fixed;z-index: 200;left: 0;top: 0;width: 100%;height: 100%;overflow: auto;background-color: rgba(0,0,0,0.6);backdrop-filter: blur(8px);}
@@ -304,9 +401,9 @@
         <div class="modal-content card">
             <span class="close-button">&times;</span>
             <div class="modal-body">
-                <h2>目前更新进度：</h2>
+                <h2>📘 帮助与提示</h2>
                 <hr>
-                <p>经典模式完成，可复制对应分解，乘积/加和有待完善</p>
+                <p>目前缺省，后续加入</p>
             </div>
         </div>
     </div>
