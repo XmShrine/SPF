@@ -3,30 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>对称多项式初等分解 - 暗黑模式</title>
+    <title>SPF</title>
     
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha384-fhYLJZkbU8EZ0R6AxN8I6YTILgGrhYZVXZ2j24MVKSTOvqtCPcd6yAevPl+4TuRW" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha384-XI4F3vouKmuyjRcSjWc2mNMaUZFby1FYX0GHoDcgD4TL8O6cWsDHdNp3Zu9SS3hR" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="./katex/katex.min.css">
-    <script defer src="./katex/katex.min.js"></script>
-    <script defer src="./katex/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']], // 启用 $...$ 作为行内公式分隔符
+            displayMath: [['$$', '$$'], ['\\[', '\\]']] // 启用 $$...$$ 作为块级公式分隔符
+          },
+          svg: {
+            fontCache: 'global'
+          },
+          options: {
+            renderActions: {
+              // 确保公式渲染发生在内容更新之后
+              assistiveMml: [], 
+              addMenu: [],
+              sre: []
+            }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
         /* ----------------------------------- */
         /* 基础与排版 - 苹果暗黑设计语言 */
         /* ----------------------------------- */
         :root {
-            --apple-bg: #1e1e1e; /* 深邃的暗灰色背景 */
-            --apple-card-bg: #2c2c2e; /* 卡片背景，略浅于主背景 */
-            --apple-border: #444444; /* 深色背景下的柔和边框 */
-            --apple-shadow: rgba(0, 0, 0, 0.4); /* 暗黑模式下的阴影 */
-            --apple-primary: #0a84ff; /* 蓝色主色调 (更亮的 Apple Blue 适应暗色) */
-            --apple-text-color: #f0f0f0; /* 亮白色主文字 */
-            --apple-secondary-text: #aeaeb3; /* 柔和的浅灰色辅助文字 */
+            --apple-bg: #1e1e1e; 
+            --apple-card-bg: #2c2c2e;
+            --apple-border: #444444; 
+            --apple-shadow: rgba(0, 0, 0, 0.4); 
+            --apple-primary: #0a84ff; 
+            --apple-text-color: #f0f0f0;
+            --apple-secondary-text: #aeaeb3;
             --apple-radius: 12px;
             --apple-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            --input-box-bg: #3c3c3e; /* 输入框的更深背景 */
+            --input-box-bg: #3c3c3e;
         }
 
         body {
@@ -39,8 +53,6 @@
             justify-content: center;
             min-height: 100vh;
             box-sizing: border-box;
-            /* 确保 KaTeX 在暗黑模式下的颜色适配 */
-            --katex-color: var(--apple-text-color);
         }
 
         .container {
@@ -56,7 +68,6 @@
             background-color: var(--apple-card-bg);
             border-radius: var(--apple-radius);
             padding: 25px;
-            /* 模拟 macOS 窗口的深度感 */
             box-shadow: 0 8px 30px var(--apple-shadow); 
             border: 1px solid var(--apple-border);
             transition: box-shadow 0.3s ease, border-color 0.3s;
@@ -67,9 +78,9 @@
             border-color: #555555;
         }
         
-        /* 强制 KaTeX 公式颜色为白色 (因为它可能默认是黑色) */
-        .katex, .katex-display {
-            color: var(--apple-text-color) !important;
+        /* MathJax 默认颜色通常较好，但我们依然确保文本是亮色 */
+        #polyOutput {
+             color: var(--apple-text-color);
         }
 
         /* ----------------------------------- */
@@ -106,7 +117,7 @@
             min-height: 120px;
             resize: vertical;
             padding: 15px;
-            background-color: var(--input-box-bg); /* 更深的输入框背景 */
+            background-color: var(--input-box-bg); 
             border: 1px solid var(--apple-border);
             border-radius: 8px;
             font-size: 16px;
@@ -118,17 +129,17 @@
 
         #polyInput:focus {
             border-color: var(--apple-primary);
-            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3); /* 聚焦光晕效果 */
+            box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
         }
 
         .action-button {
             background-color: var(--apple-primary);
-            color: black; /* 确保文字在亮蓝背景上清晰 */
+            color: black;
             border: none;
             border-radius: 8px;
             padding: 12px 20px;
             font-size: 16px;
-            font-weight: 600; /* 加粗 */
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -138,13 +149,12 @@
             height: 120px;
             min-width: 80px;
         }
-        /* 模拟苹果 SF Symbols 风格的亮色按钮文本 */
         .action-button .icon, .action-button .text {
             color: white; 
         }
 
         .action-button:hover {
-            background-color: #2b9aff; /* 略亮 */
+            background-color: #2b9aff;
         }
 
         .action-button:active {
@@ -181,10 +191,9 @@
 
         .mode-buttons {
             display: inline-flex;
-            /* 模仿 Segmented Control 的背景 */
             background-color: var(--input-box-bg); 
             border: 1px solid var(--apple-border);
-            border-radius: 9px; /* 更圆润 */
+            border-radius: 9px;
             overflow: hidden;
             flex-shrink: 1;
         }
@@ -195,23 +204,21 @@
 
         .mode-buttons label {
             padding: 8px 15px;
-            font-size: 14px; /* 字体略小 */
+            font-size: 14px;
             cursor: pointer;
-            background-color: transparent; /* 默认透明 */
+            background-color: transparent;
             color: var(--apple-secondary-text);
             transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
-            /* 在暗黑模式下移除边框，依赖背景颜色和高亮 */
             border-right: none; 
             font-weight: 500;
             text-align: center;
             min-width: 80px;
         }
         
-        /* 选中状态：模拟Segmented Control的蓝色背景和白字 */
         .mode-buttons input[type="radio"]:checked + label {
             background-color: var(--apple-primary);
             color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* 增加深度感 */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
 
         /* ----------------------------------- */
@@ -231,11 +238,12 @@
             max-height: 300px;
             overflow-y: auto;
             padding: 15px;
-            background-color: var(--input-box-bg); /* 和输入框使用同级背景 */
+            background-color: var(--input-box-bg);
             border: 1px solid var(--apple-border);
             border-radius: 8px;
             font-size: 16px;
             line-height: 1.6;
+            /* MathJax 渲染后会自己管理颜色，但这里确保容器有正确的文本颜色 */
             color: var(--apple-text-color);
         }
 
@@ -275,8 +283,8 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.6); /* 更深的半透明背景 */
-            backdrop-filter: blur(8px); /* 更强的磨砂玻璃效果 */
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
         }
 
         .modal-content {
@@ -285,7 +293,7 @@
             width: 80%;
             max-width: 600px;
             position: relative;
-            background-color: var(--apple-card-bg); /* 使用卡片背景色 */
+            background-color: var(--apple-card-bg);
             animation-name: animatetop;
             animation-duration: 0.4s;
         }
@@ -323,13 +331,13 @@
         }
 
         .modal-body pre {
-            background-color: var(--input-box-bg); /* 使用深色背景 */
+            background-color: var(--input-box-bg);
             padding: 10px;
             border-radius: 6px;
             overflow-x: auto;
             font-size: 14px;
             margin: 10px 0;
-            color: white; /* 代码文本使用纯白 */
+            color: white;
             border: 1px solid var(--apple-border);
         }
 
@@ -374,8 +382,8 @@
         </div>
 
         <div class="output-area card">
-            <h2>分解结果 (支持 \( \LaTeX \) 渲染)</h2>
-            <div id="polyOutput" class="output-box" data-katex>
+            <h2>分解结果 (支持 \(\LaTeX\) 渲染)</h2>
+            <div id="polyOutput" class="output-box" data-mathjax-ignore>
                 等待输入...
             </div>
         </div>
@@ -391,7 +399,7 @@
                 <hr>
                 <p><strong>输入格式说明：</strong></p>
                 <p>请确保您的多项式输入符合程序要求。例如，一个简单多项式可能是：</p>
-                <pre>\(a^2 + b^2 + c^2\)</pre>
+                <pre>a^2 + b^2 + c^2</pre>
                 <p>程序将尝试将其分解为初等对称多项式 $\sigma_1, \sigma_2, \dots$ 的组合。</p>
                 <p><strong>分解模式解释：</strong></p>
                 <ul>
@@ -406,7 +414,7 @@
     </div>
 
     <script>
-        // *** JavaScript 逻辑部分 ***
+        // *** JavaScript 逻辑部分 - MathJax 渲染逻辑已修改 ***
 
         /**
          * TODO: 请在此处实现您的 DealPoly 函数
@@ -423,6 +431,7 @@
             }
             
             // 示例输出，包含 LaTeX 公式
+            // MathJax 默认支持 $...$ 和 $$...$$
             const sampleOutput = {
                 1: `根据经典模式，多项式 $${input.replace(/\s/g, "")}$$ 的初等分解结果为：$$a^2 + b^2 + c^2 = \\sigma_1^2 - 2\\sigma_2$$其中 $\\sigma_1 = a+b+c$。`,
                 2: `乘积模式结果：$$\\frac{1}{2}\\sigma_1 (\\sigma_1^2 - 3\\sigma_2) + \\sigma_3$$`,
@@ -442,37 +451,31 @@
 
         function processInput() {
             const input = polyInput.value;
-            let mode = 1; // 默认经典模式
+            let mode = 1; 
             modeRadios.forEach(radio => {
                 if (radio.checked) {
                     mode = parseInt(radio.value);
                 }
             });
             
-            // 调用 DealPoly 函数
             const result = DealPoly(input, mode);
             
-            // 更新输出框内容
+            // 1. 更新输出框内容
             polyOutput.innerHTML = result;
             
-            // 重新渲染 LaTeX
-            if (typeof renderMathInElement === 'function') {
-                renderMathInElement(polyOutput, {
-                    delimiters: [
-                        {left: "$$", right: "$$", display: true},
-                        {left: "$", right: "$", display: false}
-                    ],
-                    throwOnError : false
-                });
+            // 2. 调用 MathJax 重新渲染该元素
+            // MathJax.typesetPromise() 是 MathJax 3 推荐的异步渲染方法
+            if (window.MathJax) {
+                 MathJax.typesetPromise([polyOutput]).catch((err) => console.log('MathJax Typeset Error: ' + err.message));
             } else {
-                console.error("KaTeX auto-render function is not available. Please check the local KaTeX files.");
+                 console.error("MathJax object is not available.");
             }
         }
 
         // 按钮点击事件
         submitBtn.addEventListener('click', processInput);
         
-        // 模态框逻辑
+        // 模态框逻辑 (保持不变)
         infoBtn.addEventListener('click', () => {
             infoModal.style.display = 'block';
         });
@@ -487,17 +490,7 @@
             }
         });
         
-        // 初始渲染一次
-        if (typeof renderMathInElement === 'function') {
-            renderMathInElement(polyOutput, {
-                delimiters: [
-                    {left: "$$", right: "$$", display: true},
-                    {left: "$", right: "$", display: false}
-                ],
-                throwOnError : false
-            });
-        }
-        
+        // 初始页面加载时，MathJax 会自动扫描 body，因此不需要额外的初始化渲染
     </script>
 </body>
 </html>
