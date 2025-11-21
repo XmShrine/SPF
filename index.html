@@ -516,6 +516,12 @@
             flex: 1;             /* 占据剩余空间 */
             padding-right: 10px; /* 给滚动条留点空隙 */
             min-height: 0;       /* Firefox Flex容器滚动bug修复 */
+            
+            /* --- 修复移动端横向晃动 (Elastic Scrolling Fix) --- */
+            overflow-x: hidden;           /* 强制隐藏水平溢出 */
+            overscroll-behavior: contain; /* 阻止滚动链，防止整个页面跟着动 */
+            word-wrap: break-word;        /* 强制长单词换行 */
+            overflow-wrap: break-word;    /* 兼容性写法 */
         }
 
         .modal-body h2 {
