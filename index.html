@@ -427,7 +427,7 @@
         }
 
         /* ----------------------------------- */
-        /* 帮助按钮与模态框 */
+        /* 帮助按钮与模态框 (已优化版) */
         /* ----------------------------------- */
         .info-button {
             position: fixed;
@@ -473,24 +473,36 @@
             animation: fadeIn 0.3s ease;
         }
 
+        /* --- 关键修改：弹窗内容容器 --- */
         .modal-content {
-            margin: 10% auto;
-            width: 85%;
-            max-width: 500px;
+            margin: 5vh auto;     /* 垂直居中，使用vh单位 */
+            width: 90%;           /* 宽度稍微加宽 */
+            max-width: 600px;
+            max-height: 85vh;     /* 限制最大高度，防止超出一屏 */
+            display: flex;        /* 使用Flex布局 */
+            flex-direction: column; /* 垂直排列：标题栏不动，内容动 */
             position: relative;
             animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            /* 模态框特有样式 */
-            background: #1c1c1e;
-            border: 1px solid rgba(255,255,255,0.1);
+            background-color: var(--ios-card-bg);
+            backdrop-filter: blur(var(--blur-level)) saturate(180%);
+            -webkit-backdrop-filter: blur(var(--blur-level)) saturate(180%);
+            border: 1px solid var(--ios-card-border);
+            border-radius: var(--radius-l);
+            padding: 28px;
+            box-shadow: var(--ios-card-shadow);
         }
 
+        /* --- 关键修改：关闭按钮 --- */
         .close-button {
             color: rgba(255,255,255,0.3);
-            float: right;
             font-size: 28px;
             font-weight: 400;
             transition: color 0.2s;
-            margin-top: -5px;
+            line-height: 1;
+            align-self: flex-end; /* Flex布局下靠右 */
+            margin-top: -10px;
+            margin-right: -5px;
+            margin-bottom: 5px;
         }
 
         .close-button:hover {
@@ -498,6 +510,14 @@
             cursor: pointer;
         }
         
+        /* --- 关键修改：可滚动的文字区域 --- */
+        .modal-body {
+            overflow-y: auto;    /* 超出高度自动显示滚动条 */
+            flex: 1;             /* 占据剩余空间 */
+            padding-right: 10px; /* 给滚动条留点空隙 */
+            min-height: 0;       /* Firefox Flex容器滚动bug修复 */
+        }
+
         .modal-body h2 {
             font-size: 20px;
             margin-top: 0;
@@ -511,6 +531,12 @@
             margin: 15px 0;
         }
 
+        /* 专门控制模态框正文的行间距 */
+        .modal-body p {
+            line-height: 1.8;  
+            margin-bottom: 12px; 
+        }
+
         /* ----------------------------------- */
         /* 移动端适配 */
         /* ----------------------------------- */
@@ -522,6 +548,14 @@
             .card {
                 padding: 20px;
                 border-radius: 20px;
+            }
+            
+            /* 移动端弹窗适配 */
+            .modal-content {
+                width: 95%;
+                margin: 20px auto;
+                max-height: 90vh; /* 手机上允许更高 */
+                padding: 20px;
             }
             
             .mode-selector {
@@ -666,10 +700,16 @@
         <div class="modal-content card">
             <span class="close-button">&times;</span>
             <div class="modal-body">
-                <h2>📘 帮助与提示</h2>
+                <h2>使用教程</h2>
                 <hr>
-                <p>在此处查看多项式输入规则。</p>
-                <p style="color: var(--ios-text-secondary); font-size: 14px;">目前支持 LaTeX 渲染预览与一键复制功能。</p>
+                <p><strong>经典模式</strong></p>
+                <p>例如对于对称多项式 $x_1^3+x_2^3+x_3^3$，其实际上可以补全为 $x_1^3x_2^0x_3^0+x_1^0x_2^3x_3^0+x_1^0x_2^0x_3^3$，进而为了输入方便，可讲一个多项式抽象为系数和各个变量的次数，于是想表示上述对称多项式只需要在输入框内输入 $[1][3,0,0]+[1][0,3,0]+[1][0,0,3]$ 即可.</p>
+                <p><strong>乘积模式</strong></p>
+                <p>这种模式实际就是 $\prod x_1^2x_2$ 这类简写的对称多项式，前者实际表示 (在变量个数为 3 的前提下) $(x_1^2x_2)(x_1x_2^2)(x_1^2x_3)(x_1x_3^2)(x_2^2x_3)(x_2x_3^2)$，可以看出，这种展开其实是和变量个数相关的，所以在使用这种模式时要先输入总共含有的变量数量再仿照第一种模式输入 $\prod$ 内的<strong>一项</strong>即可</p>
+                <p><strong>加和模式</strong></p>
+                <p>这种模式实际就是 $\sum x_1^2x_2$ 这类简写的对称多项式，前者实际表示 (在变量个数为 3 的前提下) $(x_1^2x_2 + x_1x_2^2 + x_1^2x_3 + x_1x_3^2 + x_2^2x_3 + x_2x_3^2)$，可以看出，这种展开其实是和变量个数相关的，所以在使用这种模式时要先输入总共含有的变量数量再仿照第一种模式输入 $\sum$ 内的<strong>一项</strong>即可</p>
+                <p><strong>复制方式</strong></p>
+                <p>可以选择将结果以 LaTeX 格式复制以便在论文或作业中使用，或者以纯文本格式复制以便在代码或其他文本环境中使用。</p>
             </div>
         </div>
     </div>
@@ -811,18 +851,48 @@
             try {
                 // 假设 input.toPolynomial() 返回一个多项式对象
                 const inputPoly = input.toPolynomial(); 
-                tempPoly = SPF(inputPoly, polyTotalNum); 
+                if (inputPoly.arr.length != 0) {
+                    switch (mode) {
+                        case '1':
+                            tempPoly = SPF(inputPoly); 
+                            break;
+                        case '2':
+                            var tmp = new SymPoly(inputPoly, polyTotalNum);
+                            tmp = tmp.arr;
+                            tempPoly = Polynomial.number(1);
+                            for (var i=0; i<tmp.length; i++) {
+                                tempPoly = Polynomial.mult(tempPoly, tmp[i]);
+                            }
+                            tempPoly = SPF(tempPoly);
+                            // 乘积模式
+                            break;
+                        case '3':
+                            var tmp = new SymPoly(inputPoly, polyTotalNum);
+                            tmp = tmp.arr;
+                            tempPoly = Polynomial.number(0);
+                            for (var i=0; i<tmp.length; i++) {
+                                tempPoly = Polynomial.add(tempPoly, tmp[i]);
+                            }
+                            tempPoly = SPF(tempPoly);
+                            // 加和模式
+                            break;
+                        default:
+                            throw new Error("无效的分解模式");
+                    }
+                } else {
+                    tempPoly = false; // 非对称多项式
+                }
             } catch (e) {
                 console.error("Polynomial processing error:", e);
-                return `处理多项式时出错: ${e.message || e}`;
+                return "$\\text{Not a Sym Polynomial?}$";
             }
 
             
             // 示例输出，MathJax 默认支持 $...$ 和 $$...$$
             const sampleOutput = {
                 1: (tempPoly==false) ? "$\\text{Not a Sym Polynomial}$" : PolyToTex(tempPoly),
-                2: `乘积模式 (${polyTotalNum} 变量) 结果：$$\\frac{1}{2}\\sigma_1 (\\sigma_1^2 - 3\\sigma_2) + \\sigma_3$$`,
-                3: `加和模式 (${polyTotalNum} 变量) 结果：$$(\\sigma_1 - x_1)(\\sigma_1 - x_2)\\dots(\\sigma_1 - x_{N})$$`
+                2: (tempPoly==false) ? "$\\text{Not a Sym Polynomial}$" : PolyToTex(tempPoly),
+                3: (tempPoly==false) ? "$\\text{Not a Sym Polynomial}$" : PolyToTex(tempPoly)
             };
             
             return sampleOutput[mode] || "模式错误或处理失败。";

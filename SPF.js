@@ -27,6 +27,7 @@ class Monomial {
         this.update()
         return `[${this.coeff}][${this.variable}]`
     }
+    // 注意从 0 开始
     swap(i, j) {
         var temp = [];
         var len = this.variable.length;
@@ -345,4 +346,45 @@ function SPF(pol) {
 
 function SPFApply(str) {
     return SPF(str.toPolynomial()).toString();
+}
+
+// 用于从一个单项式生成 n! 个对称多项式
+class SymPoly {
+    constructor(pol, n) {
+        this.n = n;
+        this.arr = [pol];
+        this.pol = pol;
+        this.generate(n);
+    }
+    update() {
+        var temp = [];
+        for (var i=0; i<this.arr.length; i++) {
+            var status = true;
+            for (var j=0; j<i; j++) {
+                if (Polynomial.compare(this.arr[i], this.arr[j]) == true) {
+                    status = false;
+                    break;
+                }
+            }
+            if (status == true) {
+                temp.push(this.arr[i]);
+            }
+        }
+        this.arr = temp;
+        return this;
+    }
+    generate(k) {
+        if (k==1) {
+            return [this.pol];
+        }
+        var tempArr = this.generate(k-1);
+        var temp = [];
+        for (var i=0; i<k-1; i++) {
+            for (var j=0; j<tempArr.length; j++) {
+                temp.push(tempArr[j].swap(i, k-1));
+            }
+        }
+        this.arr = this.arr.concat(temp);
+        return this.update().arr;
+    }
 }
